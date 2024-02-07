@@ -1974,7 +1974,7 @@ function new_archived_incident_cluster_layer() {
     function buildEventHeatmap() {
 
 
-        fetch('../data/points.json').then(response => {
+        fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
 
@@ -2013,7 +2013,7 @@ function new_archived_incident_cluster_layer() {
     function buildSubjectivityHeatmap() {
 
 
-        fetch('../data/points.json').then(response => {
+        fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
             console.log(points);
@@ -2043,7 +2043,7 @@ function new_archived_incident_cluster_layer() {
     function buildPolarityHeatmap() {
 
 
-        fetch('../data/points.json').then(response => {
+        fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
             console.log(points);
@@ -2074,7 +2074,7 @@ function new_archived_incident_cluster_layer() {
     function buildTweetDensityHeatmap() {
 
 
-        fetch('../data/points.json').then(response => {
+        fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
             console.log(points);
