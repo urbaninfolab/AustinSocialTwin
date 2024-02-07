@@ -248,7 +248,7 @@ h5 {
 #map,
 #modal-background {
 	position: absolute;
-	top: 40px;
+	top: 50px;
 	bottom: 0;
 	width: 100%;
 	z-index: 1;

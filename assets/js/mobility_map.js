@@ -436,12 +436,15 @@ function new_archived_incident_cluster_layer() {
     }
 
     function addMapLayer(map) {
+        L.tileLayer('https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }).addTo(map);
         // L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=podpBxEPp3rRpfqa6JY8', {
         //     attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
         // }).addTo(map);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // }).addTo(map);
         console.log("BEING CALLED");
         map.addLayer(activeFires)
         if(inactive_flag)
@@ -1964,47 +1967,138 @@ function new_archived_incident_cluster_layer() {
 
 
         // Call the function to retrieve and process the GeoJSON file
-    let noisePoints2 = [];
+    let eventPoints = [];
     let current_noise_shapefile = null;
+
     
-    function buildNoiseHeatmap() {
-
-        const storage = app.storage();
-        const noiseRef = storage.ref('noise_points.json');
-
-        noisePoints2 = [];
+    function buildEventHeatmap() {
 
 
-        noiseRef.getDownloadURL().then((url) => {
-            const xhr = new XMLHttpRequest();
-            xhr.responseType = 'blob';
-            xhr.onload = async (event) => {
-              const blob = xhr.response;
-              data = JSON.parse(await blob.text())
+        fetch('../data/points.json').then(response => {
+            return response.json();
+        }).then(points => {
 
-              for(var i = 0; i < 10000000; i++) {
-                const json_object = data[String(i)];
-                if(json_object) {
-                    noisePoints2.push([json_object.latitude, json_object.longitude, Math.max(30, data[String(i)].noise_level)])
-                }
+            var min_point = 1000000;
+            var max_point = -1000;
+            console.log(points);
+            for(var i = 0; i < points.features.length; i++) {
+                eventPoint = points.features[i].properties;
+                max_point = Math.max(max_point, eventPoint.score);
+                min_point = Math.min(min_point, eventPoint.score);
+                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, Math.max(0.001, 2*eventPoint.score)])
+            }
+            console.log(min_point);
+            console.log(max_point);
+            var heat = L.heatLayer(
+                eventPoints
+            , {radius: 10, min: 0.001, max: 0.02, maxZoom: 2, blur: 10});
             
-              }
-              var heat = L.heatLayer(
-                noisePoints2
-            , {radius: 5, max: 80, maxZoom: 15, blur: 1});
+            
+            heat.addTo(map);
+            current_noise_shapefile = heat;
+            // heat.
+            
+
+            
+           
+        })
+      
+    
+    }
+
+
+    let sentimentPoints = [];
+    // let current_event_shapefile = null;
+    
+    function buildSubjectivityHeatmap() {
+
+
+        fetch('../data/points.json').then(response => {
+            return response.json();
+        }).then(points => {
+            console.log(points);
+            for(var i = 0; i < points.features.length; i++) {
+                eventPoint = points.features[i].properties;
+                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, eventPoint.AVG_SUBJECTIVITY])
+            }
+
+            var heat = L.heatLayer(
+                eventPoints
+            , {radius: 10, min: 0.3, max: 0.8, maxZoom: 3, blur: 5});
+            
             
             heat.addTo(map);
             current_noise_shapefile = heat;
 
-            };
-            xhr.open('GET', url);
-            xhr.send();
-        
+            
+           
         })
-
+      
     
     }
 
+    let polarityPoints = [];
+    // let current_event_shapefile = null;
+    
+    function buildPolarityHeatmap() {
+
+
+        fetch('../data/points.json').then(response => {
+            return response.json();
+        }).then(points => {
+            console.log(points);
+            for(var i = 0; i < points.features.length; i++) {
+                eventPoint = points.features[i].properties;
+                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, eventPoint.AVG_POLARITY])
+            }
+
+            var heat = L.heatLayer(
+                eventPoints
+            , {radius: 10, min: 0.3, max: 0.8, maxZoom: 3, blur: 5});
+            
+            
+            heat.addTo(map);
+            current_noise_shapefile = heat;
+
+            
+           
+        })
+      
+    
+    }
+
+
+    let xDensityPoints = [];
+    // let current_event_shapefile = null;
+    
+    function buildTweetDensityHeatmap() {
+
+
+        fetch('../data/points.json').then(response => {
+            return response.json();
+        }).then(points => {
+            console.log(points);
+            for(var i = 0; i < points.features.length; i++) {
+                eventPoint = points.features[i].properties;
+                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, Math.log(eventPoint.TWEET_COUNT)])
+            }
+
+            var heat = L.heatLayer(
+                eventPoints
+            , {radius: 10, min: 0, max: 11, maxZoom: 3, blur: 5});
+            
+            
+            heat.addTo(map);
+            current_noise_shapefile = heat;
+
+            
+           
+        })
+      
+    
+    }
+
+    
 
 
     let current_watershed_shapefile = null;
@@ -2090,22 +2184,82 @@ function new_archived_incident_cluster_layer() {
         
         
     }
-    
-    function buildNoiseLayer() {
+    let isEventPredictionMap = false;
+    function buildEventLayer() {
         if (current_noise_shapefile != null){
-            map.removeLayer(current_noise_shapefile)
-            current_noise_shapefile = null
+            map.removeLayer(current_noise_shapefile);
+            current_noise_shapefile = null;
+            eventPoints = [];
         }
-        if (!document.querySelector(".choropleth_incident").checked) {
+        if (!document.querySelector(".event_likelihood").checked) {
             return
         }
 
        
-        buildNoiseHeatmap();
+        buildEventHeatmap();
+        isEventPredictionMap = true;
         
        
        
     }
+
+    function buildSubjectivityLayer() {
+        if (current_noise_shapefile != null){
+            map.removeLayer(current_noise_shapefile)
+            current_noise_shapefile = null;
+            eventPoints = [];
+        }
+        if (!document.querySelector(".subjectivity").checked) {
+            return
+        }
+
+       
+        buildSubjectivityHeatmap();
+        isEventPredictionMap = false;
+        
+       
+       
+    }
+
+
+    function buildPolarityLayer() {
+        if (current_noise_shapefile != null){
+            map.removeLayer(current_noise_shapefile)
+            current_noise_shapefile = null;
+            eventPoints = [];
+        }
+        if (!document.querySelector(".polarity").checked) {
+            return
+        }
+
+       
+        buildPolarityHeatmap();
+        isEventPredictionMap = false;
+        
+       
+       
+    }
+
+
+    function buildTweetDensityLayer() {
+        if (current_noise_shapefile != null){
+            map.removeLayer(current_noise_shapefile)
+            current_noise_shapefile = null;
+            eventPoints = [];
+        }
+        if (!document.querySelector(".tweet_density").checked) {
+            return
+        }
+
+       
+        buildTweetDensityHeatmap();
+        isEventPredictionMap = false;
+        
+       
+       
+    }
+
+    
 
     let current_road_incident = null
     function buildRoadIncident() {
@@ -2214,27 +2368,39 @@ function new_archived_incident_cluster_layer() {
             buildStatusToggleButton(map, checkboxActiveFire);
         });
 
-        document.querySelector(".firedept").addEventListener('click', function () {
-            buildPOIMap();
-        });
+        // document.querySelector(".firedept").addEventListener('click', function () {
+        //     buildPOIMap();
+        // });
 
-        document.querySelector(".water").addEventListener('click', function () {
-            buildWaterPollutionMap();
-        });
+        // document.querySelector(".water").addEventListener('click', function () {
+        //     buildWaterPollutionMap();
+        // });
 
 
-        document.querySelector(".watershed").addEventListener('click', function () {
-            buildWatershedShapefile();
-        });
+        // document.querySelector(".watershed").addEventListener('click', function () {
+        //     buildWatershedShapefile();
+        // });
 
         
-        document.querySelector(".choropleth_incident").addEventListener('click', function () {
-            buildNoiseLayer();
+        document.querySelector(".event_likelihood").addEventListener('click', function () {
+            buildEventLayer();
         });
 
-        document.querySelector(".traffic_condition").addEventListener('click', function () {
-            builtTrafficMap();
+        document.querySelector(".subjectivity").addEventListener('click', function () {
+            buildSubjectivityLayer();
         });
+
+        document.querySelector(".polarity").addEventListener('click', function () {
+            buildPolarityLayer();
+        });
+
+        document.querySelector(".tweet_density").addEventListener('click', function () {
+            buildTweetDensityLayer();
+        });
+
+        // document.querySelector(".traffic_condition").addEventListener('click', function () {
+        //     builtTrafficMap();
+        // });
 
 
         var checkboxOneSmoke = document.querySelector(".one-hour-smoke");
@@ -2459,25 +2625,30 @@ function new_archived_incident_cluster_layer() {
             return;
         }
 
+        // make sure shapefile is event prediction
+        if(!isEventPredictionMap) {
+            return
+        }
+
         const degreePerMeter = 1 / 111139;
-        const pointRadiusDetection = 30;
+        const pointRadiusDetection = 500;
 
         var bestPointDistance = 0xFFFFFFFF;
-        var bestPointNoiseLevel = -1;
+        var bestEventLevel = -1;
 
-        for (var i = 0; i < noisePoints2.length; i++) {
+        for (var i = 0; i < eventPoints.length; i++) {
 
-            const noisePoint = noisePoints2[i];
-            const latitude = noisePoint[0];
-            const longitude = noisePoint[1];
-            const noise_level = noisePoint[2];
+            const eventPoint = eventPoints[i];
+            const latitude = eventPoint[0];
+            const longitude = eventPoint[1];
+            const noise_level = eventPoint[2];
            
             // calculate distance from noise point, if less than 20 meters (20 / 111139), use as noise level, if not consider noise level normal
             const dist = ((Math.abs(e.latlng.lat - latitude) + Math.abs(e.latlng.lng - longitude)) / 2);
             if(dist <= degreePerMeter * pointRadiusDetection) {
                 if(dist <= bestPointDistance) {
                     bestPointDistance = dist;
-                    bestPointNoiseLevel = noise_level;
+                    bestEventLevel = noise_level;
                     currentLon = longitude;
                     currentLat = latitude;
                     predictedNoise = noise_level;
@@ -2489,31 +2660,31 @@ function new_archived_incident_cluster_layer() {
         }
 
         var extraInformation = "The noise levels around you are as loud as a whisper. These levels of noise are <i>safe!</i>"
-        if(bestPointNoiseLevel < 40) {
+        if(bestEventLevel < 40) {
             extraInformation = "The noise levels around you are as loud as a whisper. These levels of noise are <i>safe!</i>"
-        } else if(bestPointNoiseLevel < 60) {
+        } else if(bestEventLevel < 60) {
             extraInformation = "The noise levels around you are as loud as an average indoor room. These levels of noise are <i>safe!</i>"
-        } else if(bestPointNoiseLevel < 70) {
+        } else if(bestEventLevel < 70) {
             extraInformation = "The noise levels around you are as loud as an average office room. These levels of noise are <i>safe!</i>"
-        } else if(bestPointNoiseLevel < 80) {
+        } else if(bestEventLevel < 80) {
             extraInformation = "The noise levels around you are as loud as landscaping equipment (from inside a home). These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 85) {
+        } else if(bestEventLevel < 85) {
             extraInformation = "The noise levels around you are as loud as an electric vacuum. These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 85) {
+        } else if(bestEventLevel < 85) {
             extraInformation = "The noise levels around you are as loud as an electric vacuum. These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 90) {
+        } else if(bestEventLevel < 90) {
             extraInformation = "The noise levels around you are as loud as a noisy restaurant. These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 95) {
+        } else if(bestEventLevel < 95) {
             extraInformation = "The noise levels around you are as loud as a hairdryer. These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 100) {
+        } else if(bestEventLevel < 100) {
             extraInformation = "The noise levels around you are as loud as a pro sports game. These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 100) {
+        } else if(bestEventLevel < 100) {
             extraInformation = "The noise levels around you are as loud as a pro sports game. These levels of noise can be <i>dangerous</i> if you are exposed to them over time. "
-        } else if(bestPointNoiseLevel < 110) {
+        } else if(bestEventLevel < 110) {
             extraInformation = "The noise levels around you are as loud as a lawn mower. These levels of noise are dangerous and can cause pain. If you are exposed to these levels, please wear sound protection."
-        } else if(bestPointNoiseLevel < 120) {
+        } else if(bestEventLevel < 120) {
             extraInformation = "The noise levels around you are as loud as an ambulance. These levels of noise are dangerous and can cause pain. If you are exposed to these levels, please wear sound protection."
-        }  else if(bestPointNoiseLevel < 130) {
+        }  else if(bestEventLevel < 130) {
             extraInformation = "The noise levels around you are as loud as a jackhammer. These levels of noise are dangerous and can cause pain. If you are exposed to these levels, please wear sound protection."
         } else {
             extraInformation = "The noise levels around you are as loud or louder than a gun firing. These levels of noise are dangerous and can cause pain. If you are exposed to these levels, please wear sound protection."
@@ -2534,15 +2705,39 @@ function new_archived_incident_cluster_layer() {
         
 
 
-        const normalLevelContent = `<b style="font-size:20px">Noise</b> <br> 
-        <span style="font-size:16px"><b>Predicted Noise Level:</b> Normal.</span> <br>
-        The noise levels at this location are normal!`;
+        const normalLevelContent = `<b style="font-size:20px">Event Prediction</b> <br> 
+        <span style="font-size:16px"><b>Predicted Event Probability:</b> None.</span> <br>
+        With tweet density, traffic information, and more, we predict there is likely <i>not</i> an event near here.`;
 
-        const noisePointFoundContent = `<b style="font-size:20px">Noise Level</b> <br> 
-        <span style="font-size:16px"><b>Predicted Noise Level:</b> <i>${bestPointNoiseLevel} </i> db </span> <span id="noiseDescrip"> <br> ${extraInformation} </span>
-        <br> <i><a id="openSurveyButton" href="#" onclick="openNoiseMore()" >Add Noise Information at this Location</a></i>` + submitContent
+        const eventPointFoundContent = `<b style="font-size:20px">Event Prediction</b> <br> 
+        <span style="font-size:16px"><b>Predicted Event Probability:</b> <i> Likely. </i></span> <br>
+        With tweet density, traffic information, and more, we predict there is likely an event near here.`;
+
+        const eventPointLikelyFoundContent = `<b style="font-size:20px">Event Prediction</b> <br> 
+        <span style="font-size:16px"><b>Predicted Event Probability:</b> <i> Likely. </i></span> <br>
+        With tweet density, traffic information, and more, we predict there is likely an event near here.`;
         
-        const content = bestPointNoiseLevel == -1 ? normalLevelContent : noisePointFoundContent;
+
+
+        // var content = bestEventLevel <= 0.05 ? normalLevelContent : eventPointFoundContent;
+
+        if(bestEventLevel < 0.01) {
+            content = `<b style="font-size:20px">Event Prediction</b> <br> 
+            <span style="font-size:16px"><b>Predicted Event Probability:</b> None.</span> <br>
+            With tweet density, traffic information, and more, we predict there is likely <i>not</i> an event near here.`;
+        } else if (bestEventLevel < 0.05) {
+            content = `<b style="font-size:20px">Event Prediction</b> <br> 
+            <span style="font-size:16px"><b>Predicted Event Probability:</b> Somewhat likely.</span> <br>
+            With tweet density, traffic information, and more, we predict there is likely <i>not</i> an event near here.`;
+        } else if (bestEventLevel < 0.09) {
+            content = `<b style="font-size:20px">Event Prediction</b> <br> 
+            <span style="font-size:16px"><b>Predicted Event Probability:</b> Likely.</span> <br>
+            With tweet density, traffic information, and more, we predict there is likely <i>not</i> an event near here.`;
+        } else {
+            content = `<b style="font-size:20px">Event Prediction</b> <br> 
+            <span style="font-size:16px"><b>Predicted Event Probability:</b> Very Likely.</span> <br>
+            With tweet density, traffic information, and more, we predict there is likely <i>not</i> an event near here.`;
+        }
         
         
         var popup = L.popup()
@@ -2786,10 +2981,15 @@ L.control.watermark = function(opts) {
 }
 
 // default for noise map
-let noiseCheckbox = document.querySelector(".choropleth_incident")
-console.log(noiseCheckbox.checked)
-if(noiseCheckbox.checked) {
-    buildNoiseLayer()
+let eventCheckbox = document.querySelector(".event_likelihood")
+if(eventCheckbox.checked) {
+    buildEventLayer()
+}
+
+// default for noise map
+let subjectivityCheckbox = document.querySelector(".subjectivity")
+if(subjectivityCheckbox.checked) {
+    buildSubjectivityLayer()
 }
 
 
@@ -2820,4 +3020,4 @@ L.control.watermark({ position: 'bottomright' }).addTo(map);
     //     window.AverageFire = result;
     // });
 
-    
+   

@@ -357,9 +357,9 @@ return new L.DivIcon({ html: '<div><span><b>' + Math.round(avg) + '</b></span></
         // L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=podpBxEPp3rRpfqa6JY8', {
         //     attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
         // }).addTo(map);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        // }).addTo(map);
         console.log("BEING CALLED");
         map.addLayer(activeFires)
         if(inactive_flag)
@@ -1682,25 +1682,25 @@ return new L.DivIcon({ html: '<div><span><b>' + Math.round(avg) + '</b></span></
             buildStatusToggleButton(map, checkboxActiveFire);
         });
 
-        document.querySelector(".firedept").addEventListener('click', function () {
-            buildPOIMap();
-        });
+        // document.querySelector(".firedept").addEventListener('click', function () {
+        //     buildPOIMap();
+        // });
 
-        document.querySelector(".policedept").addEventListener('click', function () {
-            buildPOIMap();
-        });
+        // document.querySelector(".policedept").addEventListener('click', function () {
+        //     buildPOIMap();
+        // });
 
-        document.querySelector(".hospital").addEventListener('click', function () {
-            buildPOIMap();
-        });
+        // document.querySelector(".hospital").addEventListener('click', function () {
+        //     buildPOIMap();
+        // });
 
-        document.querySelector(".transit").addEventListener('click', function () {
-            buildTranMap();
-        });
+        // document.querySelector(".transit").addEventListener('click', function () {
+        //     buildTranMap();
+        // });
 
-        document.querySelector(".micromobility").addEventListener('click', function () {
-            buildScooterMap();
-        });
+        // document.querySelector(".micromobility").addEventListener('click', function () {
+        //     buildScooterMap();
+        // });
 
         var checkboxOneSmoke = document.querySelector(".one-hour-smoke");
         var checkboxTwoSmoke = document.querySelector(".two-hour-smoke");
