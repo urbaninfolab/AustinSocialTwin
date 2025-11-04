@@ -255,7 +255,7 @@ function new_archived_incident_cluster_layer() {
     }
 
     function getToday() {
-        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Today";
+        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Today";
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
                                 // clear all markers and rebuild map layer
@@ -274,7 +274,7 @@ function new_archived_incident_cluster_layer() {
     }
 
     function getYesterday() {
-        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Yesterday";
+        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Yesterday";
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
                         // clear all markers and rebuild map layer
@@ -294,7 +294,7 @@ function new_archived_incident_cluster_layer() {
 
 
     function get3Days() {
-        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Last 3 Days";
+        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Last 3 Days";
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
                         // clear all markers and rebuild map layer
@@ -315,7 +315,7 @@ function new_archived_incident_cluster_layer() {
     }
 
     function getCustom() {
-        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Custom";
+        document.getElementById("CurrentSelectedDate").innerHTML = "⠀ ⠀᠎⠀ ⠀Custom";;
 
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
