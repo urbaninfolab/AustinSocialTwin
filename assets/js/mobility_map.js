@@ -398,6 +398,25 @@ var markers = L.markerClusterGroup({
     }
 
 
+    let current_traffic_layer = null;
+    function builtTrafficMap() {
+        if (current_traffic_layer != null) {
+            map.removeLayer(current_traffic_layer)
+            current_traffic_layer = null
+        }
+        if (!document.querySelector(".traffic_condition").checked) {
+            return
+        }
+        let traffic_layer = L.gridLayer.googleMutant({
+            type: "roadmap",
+            styles: [
+                { featureType: "all", stylers: [{ visibility: "off" }] },
+            ],
+        }).addTo(map);
+        traffic_layer.addGoogleLayer("TrafficLayer");
+        current_traffic_layer = traffic_layer
+    }
+
     // let current_bike_path_layer = null;
     // function builtBikePathMap() {
     //     if (current_bike_path_layer != null) {
@@ -439,6 +458,10 @@ var markers = L.markerClusterGroup({
 
         document.querySelector(".tweet_density").addEventListener('change', function () {
             buildTweetDensityLayer();
+        });
+
+        document.querySelector(".traffic_condition").addEventListener('click', function () {
+            builtTrafficMap();
         });
     }
 
