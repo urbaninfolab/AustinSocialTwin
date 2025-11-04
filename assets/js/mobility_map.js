@@ -670,9 +670,6 @@ var markers = L.markerClusterGroup({
 
     map._layersMaxZoom = 19;
 
-    document.querySelector('.air-quality-legend').style.display = 'none';
-
-
 
 
     // add zostera legend
