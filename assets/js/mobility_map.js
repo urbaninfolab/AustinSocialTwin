@@ -670,9 +670,7 @@ var markers = L.markerClusterGroup({
 
     map._layersMaxZoom = 19;
 
-    document.querySelector('.afd-legend').style.display = 'none';
     document.querySelector('.air-quality-legend').style.display = 'none';
-    document.querySelector('.hvi-legend').style.display = 'none';
 
 
 

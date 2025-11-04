@@ -272,10 +272,6 @@
 
 
 			<div style="float: right; margin-right: 2rem; margin-top:-10px;" class="date-bar">
-				<div class="date-picker">
-					<!--<label for="start">Start date:</label>-->
-					<input type="date" id="start" name="trip-start" min="2022-01-31">
-				</div>
 
 				<!-- <div class="status-toggle"> </div> -->
 
@@ -283,51 +279,6 @@
 					<span class="anchor">&#12288;&#12288;</span>
 
 					<ul class="items">
-						<b>
-							<li style="display: none;">Fire Data</li>
-						</b>
-						<li style="display: none;"><input style="margin-left: 15px;" type="checkbox"
-								class="active-fire" /> Inactive Fire </li>
-						<b>
-							<li style="display: none;">Smoke Data</li>
-						</b>
-						<li style="display: none;"><input style="margin-left: 15px;" type="checkbox"
-								class="one-hour-smoke" /> 1 Hour Forecast </li>
-						<li style="display: none;"><input style="margin-left: 15px;" type="checkbox"
-								class="two-hour-smoke" /> 2 Hour Forecast </li>
-						<li style="display: none;"><input style="margin-left: 15px;" type="checkbox"
-								class="three-hour-smoke" /> 3 Hour Forecast </li>
-						<b>
-							<li style="display: none;">Air Data</li>
-						</b>
-						<li style="display: none;"><input style="margin-left: 15px;" type="checkbox"
-								class="purple-air" /> PurpleAir Data</li>
-						<!-- Microsoft seems to have pulled the rug on their air sensors -->
-						<li style="display: none;"><input style=" margin-left: 15px;" type="checkbox"
-								class="microsoft-air" /> MSR Air Quality Sensors </li>
-						<b>
-							<li style="display: none;">Shapefile</li>
-						</b>
-						<li style="display: none;"><input style="margin-left: 15px;" type="radio" id="test-risk-radio"
-								name="shapefile-radio" value="test-risk-radio" />
-							<label for="test-risk-radio">Fire Risk</label>
-						</li>
-						<li style="display: none;"><input style="margin-left: 15px;" type="radio" id="afd-radio"
-								name="shapefile-radio" value="afd-radio" />
-							<label for="afd-radio">AFD Coverage</label>
-						</li>
-						<li style="display:none"><input style="margin-left: 15px;" type="radio" id="hvi-radio"
-								name="shapefile-radio" value="hvi-radio" />
-							<label for="hvi-radio">HVI Map</label>
-						</li>
-						<li style="display: none;"><input style="margin-left: 15px;" type="radio" id="fire-risk-radio"
-								name="shapefile-radio" value="fire-risk-radio" />
-							<label for="fire-risk-radio">Fire Vulnerability Map</label>
-						</li>
-						<li style="display: none;"><input style="margin-left: 15px;" type="radio" id="no-shapefile"
-								name="shapefile-radio" value="none-radio" checked />
-							<label for="none-radio">None</label>
-						</li>
 						<b>
 							<li>Events</li>
 						</b>
@@ -459,68 +410,6 @@
 
 	</script>
 
-
-
-	<div class="legend-wrapper">
-		<div class="fire-risk-legend">
-			<div style="background-color: white;">
-				<span id="fireRiskType">Fire Risk: </span>
-			</div>
-			<div style="background-color: red;">
-				<span style="color:#ffffff">Highest</span>
-			</div>
-			<div style="background-color: orange;">
-				<span>Elevated</span>
-			</div>
-			<div style="background-color: yellow;">
-				<span>Normal</span>
-			</div>
-		</div>
-	</div>
-	<div class="legend-wrapper">
-		<div class="afd-legend">
-			<div style="background-color: white;">
-				<span>AFD Response Rate: </span>
-			</div>
-			<div style="background-color: rgb(1, 106, 1);">
-				<span style="color:#ffffff">90% and up</span>
-			</div>
-			<div style="background-color: #699d50;">
-				<span style="color:#ffffff">80% ~ 89%</span>
-			</div>
-			<div style="background-color: orange;">
-				<span style="color:#ffffff">70% ~ 79%</span>
-			</div>
-			<div style="background-color: #ff5500;">
-				<span style="color:#ffffff">50% ~ 67%</span>
-			</div>
-			<div style="background-color: #704489;">
-				<span style="color:#ffffff">Less than 50%</span>
-			</div>
-		</div>
-	</div>
-	<div class="legend-wrapper">
-		<div class="hvi-legend">
-			<div style="background-color: white;">
-				<span>AFD Response Rate: </span>
-			</div>
-			<div style="background-color: rgb(1, 106, 1);">
-				<span>90% and up</span>
-			</div>
-			<div style="background-color: #699d50;">
-				<span>80% ~ 89%</span>
-			</div>
-			<div style="background-color: orange;">
-				<span>60% ~ 79%</span>
-			</div>
-			<div style="background-color: #ff5500;">
-				<span>40% ~ 59%</span>
-			</div>
-			<div style="background-color: #704489;">
-				<span>Less than 40%</span>
-			</div>
-		</div>
-	</div>
 
 	</div>
 
