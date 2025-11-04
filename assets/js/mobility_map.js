@@ -592,7 +592,7 @@ function new_archived_incident_cluster_layer() {
     }
 
     function getToday() {
-        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Today";
+        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Today";
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
                                 // clear all markers and rebuild map layer
@@ -612,7 +612,7 @@ function new_archived_incident_cluster_layer() {
     }
 
     function getYesterday() {
-        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Yesterday";
+        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Yesterday";
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
                         // clear all markers and rebuild map layer
@@ -632,7 +632,7 @@ function new_archived_incident_cluster_layer() {
 
 
     function get3Days() {
-        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Last 3 Days";
+        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Last 3 Days";
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
                         // clear all markers and rebuild map layer
@@ -653,7 +653,7 @@ function new_archived_incident_cluster_layer() {
     }
 
     function getCustom() {
-        document.getElementById("CurrentSelectedDate").textContent = "⠀ ⠀᠎⠀ ⠀Custom";
+        document.getElementById("CurrentSelectedDate").textContent = "&#12288;&#12288;Custom";
 
         var datePicker = document.querySelector('.date-picker');
         datePicker.style.display = 'none';
@@ -1968,12 +1968,14 @@ function new_archived_incident_cluster_layer() {
 
         // Call the function to retrieve and process the GeoJSON file
     let eventPoints = [];
-    let current_noise_shapefile = null;
+    let current_event_layer = null;
+    let current_subjectivity_layer = null;
+    let current_polarity_layer = null;
+    let current_tweet_density_layer = null;
 
     
     function buildEventHeatmap() {
-
-
+        eventPoints = [];
         fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
@@ -1995,7 +1997,7 @@ function new_archived_incident_cluster_layer() {
             
             
             heat.addTo(map);
-            current_noise_shapefile = heat;
+            current_event_layer = heat;
             // heat.
             
 
@@ -2011,24 +2013,23 @@ function new_archived_incident_cluster_layer() {
     // let current_event_shapefile = null;
     
     function buildSubjectivityHeatmap() {
-
-
+        sentimentPoints = [];
         fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
             console.log(points);
             for(var i = 0; i < points.features.length; i++) {
                 eventPoint = points.features[i].properties;
-                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, eventPoint.AVG_SUBJECTIVITY])
+                sentimentPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, eventPoint.AVG_SUBJECTIVITY])
             }
 
             var heat = L.heatLayer(
-                eventPoints
+                sentimentPoints
             , {radius: 10, min: 0.3, max: 0.8, maxZoom: 3, blur: 5});
             
             
             heat.addTo(map);
-            current_noise_shapefile = heat;
+            current_subjectivity_layer = heat;
 
             
            
@@ -2041,24 +2042,23 @@ function new_archived_incident_cluster_layer() {
     // let current_event_shapefile = null;
     
     function buildPolarityHeatmap() {
-
-
+        polarityPoints = [];
         fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
             console.log(points);
             for(var i = 0; i < points.features.length; i++) {
                 eventPoint = points.features[i].properties;
-                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, eventPoint.AVG_POLARITY])
+                polarityPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, eventPoint.AVG_POLARITY])
             }
 
             var heat = L.heatLayer(
-                eventPoints
+                polarityPoints
             , {radius: 10, min: 0.3, max: 0.8, maxZoom: 3, blur: 5});
             
             
             heat.addTo(map);
-            current_noise_shapefile = heat;
+            current_polarity_layer = heat;
 
             
            
@@ -2072,24 +2072,23 @@ function new_archived_incident_cluster_layer() {
     // let current_event_shapefile = null;
     
     function buildTweetDensityHeatmap() {
-
-
+        xDensityPoints = [];
         fetch('./data/points.json').then(response => {
             return response.json();
         }).then(points => {
             console.log(points);
             for(var i = 0; i < points.features.length; i++) {
                 eventPoint = points.features[i].properties;
-                eventPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, Math.log(eventPoint.TWEET_COUNT)])
+                xDensityPoints.push([eventPoint.LATITUDE, eventPoint.LONGITUDE, Math.log(eventPoint.TWEET_COUNT)])
             }
 
             var heat = L.heatLayer(
-                eventPoints
+                xDensityPoints
             , {radius: 10, min: 0, max: 11, maxZoom: 3, blur: 5});
             
             
             heat.addTo(map);
-            current_noise_shapefile = heat;
+            current_tweet_density_layer = heat;
 
             
            
@@ -2186,9 +2185,9 @@ function new_archived_incident_cluster_layer() {
     }
     let isEventPredictionMap = false;
     function buildEventLayer() {
-        if (current_noise_shapefile != null){
-            map.removeLayer(current_noise_shapefile);
-            current_noise_shapefile = null;
+        if (current_event_layer != null){
+            map.removeLayer(current_event_layer);
+            current_event_layer = null;
             eventPoints = [];
         }
         if (!document.querySelector(".event_likelihood").checked) {
@@ -2204,10 +2203,10 @@ function new_archived_incident_cluster_layer() {
     }
 
     function buildSubjectivityLayer() {
-        if (current_noise_shapefile != null){
-            map.removeLayer(current_noise_shapefile)
-            current_noise_shapefile = null;
-            eventPoints = [];
+        if (current_subjectivity_layer != null){
+            map.removeLayer(current_subjectivity_layer)
+            current_subjectivity_layer = null;
+            sentimentPoints = [];
         }
         if (!document.querySelector(".subjectivity").checked) {
             return
@@ -2223,10 +2222,10 @@ function new_archived_incident_cluster_layer() {
 
 
     function buildPolarityLayer() {
-        if (current_noise_shapefile != null){
-            map.removeLayer(current_noise_shapefile)
-            current_noise_shapefile = null;
-            eventPoints = [];
+        if (current_polarity_layer != null){
+            map.removeLayer(current_polarity_layer)
+            current_polarity_layer = null;
+            polarityPoints = [];
         }
         if (!document.querySelector(".polarity").checked) {
             return
@@ -2242,10 +2241,10 @@ function new_archived_incident_cluster_layer() {
 
 
     function buildTweetDensityLayer() {
-        if (current_noise_shapefile != null){
-            map.removeLayer(current_noise_shapefile)
-            current_noise_shapefile = null;
-            eventPoints = [];
+        if (current_tweet_density_layer != null){
+            map.removeLayer(current_tweet_density_layer)
+            current_tweet_density_layer = null;
+            xDensityPoints = [];
         }
         if (!document.querySelector(".tweet_density").checked) {
             return
@@ -2323,15 +2322,11 @@ function new_archived_incident_cluster_layer() {
         }
         let traffic_layer = L.gridLayer.googleMutant({
             type: "roadmap",
-            pane: 'popupPane',
             styles: [
-                { featureType: "all", stylers: [{ visibility: "off" }]},
-            ]
+                { featureType: "all", stylers: [{ visibility: "off" }] },
+            ],
         }).addTo(map);
-        traffic_layer.setOpacity(0.75);
         traffic_layer.addGoogleLayer("TrafficLayer");
- 
-        // traffic_layer.bringToFront();
         current_traffic_layer = traffic_layer
     }
 
@@ -2382,25 +2377,25 @@ function new_archived_incident_cluster_layer() {
         // });
 
         
-        document.querySelector(".event_likelihood").addEventListener('click', function () {
+        document.querySelector(".event_likelihood").addEventListener('change', function () {
             buildEventLayer();
         });
 
-        document.querySelector(".subjectivity").addEventListener('click', function () {
+        document.querySelector(".subjectivity").addEventListener('change', function () {
             buildSubjectivityLayer();
         });
 
-        document.querySelector(".polarity").addEventListener('click', function () {
+        document.querySelector(".polarity").addEventListener('change', function () {
             buildPolarityLayer();
         });
 
-        document.querySelector(".tweet_density").addEventListener('click', function () {
+        document.querySelector(".tweet_density").addEventListener('change', function () {
             buildTweetDensityLayer();
         });
 
-        // document.querySelector(".traffic_condition").addEventListener('click', function () {
-        //     builtTrafficMap();
-        // });
+        document.querySelector(".traffic_condition").addEventListener('click', function () {
+            builtTrafficMap();
+        });
 
 
         var checkboxOneSmoke = document.querySelector(".one-hour-smoke");
@@ -2621,7 +2616,7 @@ function new_archived_incident_cluster_layer() {
 
     map.on('click', function(e) {
 
-        if(current_noise_shapefile == null) {
+        if(current_event_layer == null) {
             return;
         }
 
