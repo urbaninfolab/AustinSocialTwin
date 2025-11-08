@@ -37,7 +37,6 @@ function initMapAndFeatures() {
     
     // 6. Create custom control buttons
     createLocationButton(map).addTo(map);
-    createStatsButton(map).addTo(map);
     createLayersButton(map).addTo(map);
     
     // 7. Initialize default layers
